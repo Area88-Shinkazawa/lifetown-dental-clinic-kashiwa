@@ -1,0 +1,606 @@
+import React, { useState } from 'react';
+import { Upload, Eye, Download, Image } from 'lucide-react';
+
+export default function DentalHTMLEditor() {
+  const [images, setImages] = useState({
+    hero: null,
+    scanner: null,
+    xray: null,
+    microscope: null,
+    exterior: null,
+    reception: null,
+    treatment: null,
+    director: null,
+    calendar2025: null,
+    calendar2026: null
+  });
+  const [googleMapIframe, setGoogleMapIframe] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+
+  const imageLabels = {
+    hero: '院内・外観イメージ（ヒーロー）',
+    scanner: '口腔内スキャナー（SHINING3D）機器写真',
+    xray: 'レントゲン室写真',
+    microscope: '顕微鏡・モニター写真',
+    exterior: '外観写真',
+    reception: '受付・待合写真',
+    treatment: '診療台写真',
+    director: '院長写真',
+    calendar2025: '2025年度 休診日カレンダー（A4）',
+    calendar2026: '2026年度 休診日カレンダー（A4）'
+  };
+
+  const handleImageUpload = (key, file) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImages(prev => ({
+          ...prev,
+          [key]: e.target.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const generateHTML = () => {
+    return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ライフタウン歯科クリニック | 千葉県柏市松葉町の歯医者</title>
+	<meta name="description" content="千葉県柏市松葉町のライフタウン歯科クリニック。丁寧な説明と原因追求に基づく根本的治療、予防中心の診療。口腔内スキャナー、CT、デジタルレントゲン完備。">
+	<style>
+		:root { --brand:#0a7c6d; --brand-dark:#075e54; --accent:#f4f9f8; --text:#222; --muted:#666; --border:#e6e6e6; }
+		html,body {margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"; color:var(--text); background:#fff; line-height:1.75;}
+		img {max-width:100%; height:auto; display:block;}
+		a {color:var(--brand); text-decoration:none;}
+		a:hover {text-decoration:underline;}
+		header {border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; z-index:20;}
+		.container {max-width:1080px; margin:0 auto; padding:0 16px;}
+		.nav {display:flex; align-items:center; justify-content:space-between; height:64px;}
+		.brand {display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.02em;}
+		.brand .logo {width:36px; height:36px; background:var(--brand); border-radius:8px; display:grid; place-items:center; color:#fff; font-size:18px;}
+		.nav ul {display:flex; gap:20px; list-style:none; margin:0; padding:0; font-size:14px;}
+		.btn {display:inline-block; background:var(--brand); color:#fff; padding:10px 16px; border-radius:10px; font-weight:600;}
+		.btn:hover {background:var(--brand-dark); text-decoration:none;}
+		.hero {background:linear-gradient(180deg,#ffffff 0%, var(--accent) 100%); padding:48px 0 24px;}
+		.hero .grid {display:grid; grid-template-columns:1.2fr .8fr; gap:24px; align-items:center;}
+		h1 {font-size:28px; line-height:1.4; margin:0 0 12px;}
+		.lead {color:var(--muted); font-size:16px; margin:0 0 16px;}
+		.kv {aspect-ratio: 16/10; background:#dff1ed; border:1px solid var(--border); border-radius:16px; overflow:hidden;}
+		.kv img {width:100%; height:100%; object-fit:cover;}
+		.kv.placeholder {display:grid; place-items:center; color:var(--brand-dark); font-weight:700;}
+		.section {padding:40px 0; border-top:1px solid var(--border);}
+		.section h2 {font-size:22px; margin:0 0 16px;}
+		.section h3 {font-size:18px; margin:20px 0 8px;}
+		.cards {display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+		.card {border:1px solid var(--border); border-radius:14px; padding:16px; background:#fff;}
+		.list {margin:8px 0 0 0; padding-left:20px;}
+		.kv-mini {aspect-ratio: 16/9; background:#f6faf9; border:1px dashed var(--border); border-radius:12px; overflow:hidden;}
+		.kv-mini img {width:100%; height:100%; object-fit:cover;}
+		.kv-mini.placeholder {display:grid; place-items:center; color:var(--muted);}
+		.info {display:grid; grid-template-columns: 1fr 1fr; gap:16px;}
+		.table {width:100%; border-collapse:collapse; font-size:14px;}
+		.table th,.table td {border:1px solid var(--border); padding:10px; text-align:left; vertical-align:top;}
+		.badge {display:inline-block; font-size:12px; color:#fff; background:var(--brand); border-radius:999px; padding:2px 10px; vertical-align:middle;}
+		.footer {background:#0f2120; color:#eaf3f2; padding:28px 0; margin-top:40px;}
+		.footer a {color:#9fe1d3;}
+		.map-container {width:100%; height:450px; border-radius:12px; overflow:hidden;}
+		.map-container iframe {width:100%; height:100%; border:0;}
+		figure {margin:0;}
+		figcaption {color:var(--muted); font-size:14px; margin-top:8px;}
+		@media (max-width: 900px) { 
+			.hero .grid, .info, .cards {grid-template-columns:1fr;}
+			.nav ul {flex-wrap:wrap; gap:10px;}
+		}
+	</style>
+</head>
+<body>
+
+<header>
+	<div class="container nav">
+		<div class="brand">
+			<div class="logo">LT</div>
+			<div>ライフタウン歯科クリニック</div>
+		</div>
+		<nav>
+			<ul>
+				<li><a href="#policy">理念</a></li>
+				<li><a href="#features">特徴</a></li>
+				<li><a href="#clinic">院内紹介</a></li>
+				<li><a href="#access">アクセス</a></li>
+				<li><a href="#schedule">休診日</a></li>
+				<li><a href="#director">院長</a></li>
+				<li><a href="#services">診療</a></li>
+				<li><a href="#pricing">料金</a></li>
+				<li><a href="#notice">院内掲示</a></li>
+				<li><a href="#contact" class="btn">お電話：04-7135-0748</a></li>
+			</ul>
+		</nav>
+	</div>
+</header>
+
+<main>
+
+	<section class="hero">
+		<div class="container">
+			<div class="grid">
+				<div>
+					<h1>好きなものを美味しく食べ、楽しく会話できる毎日を。<br>お口の健康から支えます。</h1>
+					<p class="lead">丁寧な説明と、原因追求に基づく根本的な治療。<br>予防を軸に、長期的な健康維持をめざします。</p>
+					<p><span class="badge">ご予約・お問い合わせ</span>&nbsp;&nbsp;<a href="tel:0471350748" class="btn">TEL 04-7135-0748</a></p>
+					<p class="lead">〒277-0827 千葉県柏市松葉町1-16-6　／　＊スロープ対応・駐車場あり３台</p>
+				</div>
+				<div>${images.hero ? `<div class="kv"><img src="${images.hero}" alt="院内・外観イメージ"></div>` : '<div class="kv placeholder">院内・外観イメージ</div>'}</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="policy" class="section">
+		<div class="container">
+			<h2>理念・診療方針</h2>
+			<div class="cards">
+				<div class="card"><h3>丁寧な治療</h3><p>分かりやすい説明と丁寧な手技で、不安を軽減しながら治療を進めます。</p></div>
+				<div class="card"><h3>原因追求と根本治療</h3><p>症状の背景にある原因を見極め、再発予防まで含めた計画をご提案します。</p></div>
+				<div class="card"><h3>予防中心の長期サポート</h3><p>定期管理とセルフケア支援で、健康な状態の維持をお手伝いします。</p></div>
+			</div>
+		</div>
+	</section>
+
+	<section id="features" class="section">
+		<div class="container">
+			<h2>当院の特徴・設備</h2>
+			<div class="cards">
+				<div class="card">
+					<h3>口腔内スキャナー（SHINING3D）</h3>
+					<p>快適な型取りと精密診断に対応。近赤外線光で見つけにくい虫歯の発見にも寄与します。</p>
+					${images.scanner ? `<div class="kv-mini"><img src="${images.scanner}" alt="口腔内スキャナー"></div>` : '<div class="kv-mini placeholder">機器写真</div>'}
+				</div>
+				<div class="card">
+					<h3>デジタルレントゲン・CT</h3>
+					<p>被ばくに配慮しながら詳細な情報を取得。インプラント計画や根管治療にも有用です。</p>
+					${images.xray ? `<div class="kv-mini"><img src="${images.xray}" alt="レントゲン室"></div>` : '<div class="kv-mini placeholder">レントゲン室</div>'}
+				</div>
+				<div class="card">
+					<h3>位相差顕微鏡</h3>
+					<p>お口の中の細菌を可視化。現在地を知ることで、より効果的な予防計画につなげます。</p>
+					${images.microscope ? `<div class="kv-mini"><img src="${images.microscope}" alt="顕微鏡・モニター"></div>` : '<div class="kv-mini placeholder">顕微鏡・モニター</div>'}
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="clinic" class="section">
+		<div class="container">
+			<h2>院内のご紹介</h2>
+			<div class="cards">
+				<div class="card"><h3>外観</h3><p>目印の分かりやすい建物。入口は取り外しのスロープで段差に配慮しています。駐車場あり3台。</p>${images.exterior ? `<div class="kv-mini"><img src="${images.exterior}" alt="外観"></div>` : '<div class="kv-mini placeholder">外観写真</div>'}</div>
+				<div class="card"><h3>受付・待合</h3><p>明るく、ゆったり過ごせる空間。お困りごとはスタッフにお気軽にご相談ください。</p>${images.reception ? `<div class="kv-mini"><img src="${images.reception}" alt="受付・待合"></div>` : '<div class="kv-mini placeholder">受付・待合</div>'}</div>
+				<div class="card"><h3>診療室</h3><p>パーテーションで半個室化。落ち着いて治療を受けていただけます。</p>${images.treatment ? `<div class="kv-mini"><img src="${images.treatment}" alt="診療台"></div>` : '<div class="kv-mini placeholder">診療台</div>'}</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="access" class="section">
+		<div class="container">
+			<h2>アクセス</h2>
+			<div class="info">
+				<div class="card">
+					<h3>医院情報</h3>
+					<table class="table">
+						<tr><th>医院名</th><td>ライフタウン歯科クリニック</td></tr>
+						<tr><th>住所</th><td>〒277-0827 千葉県柏市松葉町1-16-6</td></tr>
+						<tr><th>TEL</th><td><a href="tel:0471350748">04-7135-0748</a></td></tr>
+						<tr><th>設備</th><td>取り外しスロープ対応、駐車場あり3台、ベビーカー・車いす可</td></tr>
+					</table>
+				</div>
+				<div class="card">
+					<h3>交通案内</h3>
+					<p><strong>【常磐線 北柏駅から】</strong><br>
+						JR常磐線「北柏駅」より<br><br>
+						東武バス（北柏01系統）「北柏ライフタウン」行きにご乗車ください。<br><br>
+						「松葉町2丁目」または「北柏ライフタウン」下車、徒歩約3分です。<br><br>
+						所要時間は <strong>約10〜15分</strong>（バス6〜8分＋徒歩）ほどです。
+					</p>
+					<p><strong>【つくばエクスプレス 柏たなか駅から】</strong><br>
+						つくばエクスプレス「柏たなか駅」東口より<br><br>
+						東武バス「市立柏病院入口」行きにご乗車ください。<br><br>
+						「柏市立病院入口」バス停で下車後、徒歩約6分です。<br><br>
+						所要時間は <strong>約15分前後</strong>です。
+					</p>
+				</div>
+			</div>
+			<div class="card" style="margin-top:16px;">
+				<h3>地図</h3>
+				${googleMapIframe ? `<div class="map-container">${googleMapIframe}</div>` : '<div class="kv-mini placeholder">Googleマップ埋め込み（iframeコードを入力してください）</div>'}
+			</div>
+		</div>
+	</section>
+
+	<section id="schedule" class="section">
+		<div class="container">
+			<h2>休診日・診療カレンダー（2025年-2026年度）</h2>
+			<div class="info">
+				<div class="card">
+					<h3>基本休診</h3>
+					<ul class="list">
+						<li>日曜・祝日</li>
+						<li>木曜／水曜は隔週休み</li>
+					</ul>
+				</div>
+				<div class="card">
+					<h3>2025年度 休診日カレンダー</h3>
+					${images.calendar2025 ? `<figure>
+						<img src="${images.calendar2025}" alt="2025年度 休診日カレンダー（ライフタウン歯科クリニック）">
+						<figcaption>最新の予定はお電話でご確認ください（TEL 04-7135-0748）。</figcaption>
+					</figure>` : '<div class="kv-mini placeholder">2025年度 カレンダー画像（A4）</div>'}
+				</div>
+			</div>
+			<div class="card" style="margin-top:16px;">
+				<h3>2026年度 休診日カレンダー</h3>
+				${images.calendar2026 ? `<figure>
+					<img src="${images.calendar2026}" alt="2026年度 休診日カレンダー（ライフタウン歯科クリニック）" style="max-width:100%;">
+					<figcaption>最新の予定はお電話でご確認ください（TEL 04-7135-0748）。</figcaption>
+				</figure>` : '<div class="kv-mini placeholder">2026年度 カレンダー画像（A4）</div>'}
+				<p style="color:var(--muted); font-size:14px; margin-top:8px;">最新情報はお電話でご確認ください。</p>
+			</div>
+		</div>
+	</section>
+
+	<section id="director" class="section">
+		<div class="container">
+			<h2>院長プロフィール</h2>
+			<div class="info">
+				<div class="card">
+					<h3>院長 横山 幸夫</h3>
+					<ul class="list">
+						<li>1996年 北海道大学歯学部 卒業</li>
+						<li>2002年 ライフタウン歯科クリニック 開業</li>
+					</ul>
+					<h3>所属学会</h3>
+					<ul class="list">
+						<li>日本口腔インプラント学会</li>
+						<li>日本矯正歯科学会</li>
+						<li>日本成人矯正歯科学会</li>
+						<li>日本歯科麻酔学会</li>
+						<li>日本歯科放射線学会</li>
+						<li>日本外傷歯学会</li>
+						<li>日本心身歯科医学会</li>
+						<li>日本医療教授システム学会</li>
+						<li>心身健康科学会</li>
+					</ul>
+					<h3>歯科医師会</h3>
+					<ul class="list">
+						<li>日本歯科医師会</li>
+						<li>千葉県歯科医師会</li>
+						<li>柏歯科医師会</li>
+					</ul>
+				</div>
+				<div class="card">
+					<h3>診療におけるモットー</h3>
+					<p>丁寧な治療を行い、原因追求から根本的治療を、患者さんと一緒に考えて実施します。</p>
+					<h3>趣味・休日</h3>
+					<ul class="list">
+						<li>趣味：スキー、ゴルフ</li>
+						<li>休日の過ごし方：ゴルフとドライブ</li>
+					</ul>
+					${images.director ? `<div class="kv-mini"><img src="${images.director}" alt="院長"></div>` : '<div class="kv-mini placeholder">院長写真</div>'}
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="services" class="section">
+		<div class="container">
+			<h2>診療メニュー</h2>
+			<div class="cards">
+				<div class="card"><h3>一般歯科・予防歯科</h3><p>できるだけ削らず、痛みに配慮。予防を中心に健康維持を支援します。</p></div>
+				<div class="card"><h3>小児歯科</h3><p>お子さまのペースに合わせた優しい診療で将来の健口を育みます。</p></div>
+				<div class="card"><h3>矯正歯科</h3><p>マウスピース矯正など幅広く対応。精密検査のうえ最適な計画をご提案。</p></div>
+				<div class="card"><h3>インプラント</h3><p>CT等を活用し、安全性と機能性に配慮した治療計画を行います。</p></div>
+				<div class="card"><h3>審美・ホワイトニング</h3><p>見た目と噛む機能のバランスを重視したご提案をします。</p></div>
+				<div class="card"><h3>口腔外科・歯周病・根管治療</h3><p>専門的知見に基づき、再発予防も視野に入れた治療を実施します。</p></div>
+			</div>
+		</div>
+	</section>
+
+	<section id="pricing" class="section">
+		<div class="container">
+			<h2>自由診療の料金について</h2>
+			<p style="color:var(--muted); margin-bottom:24px;">以下は標準的な料金です。精密検査により最終的な金額が決まります。全て税別表記となります。</p>
+			
+			<div class="cards">
+				<div class="card">
+					<h3>インプラント</h3>
+					<table class="table">
+						<tr><th>奥歯</th><td>300,000円</td></tr>
+						<tr><th>前歯</th><td>400,000円</td></tr>
+						<tr><th>骨造成</th><td>100,000円</td></tr>
+						<tr><th>All on 4（片側）</th><td>2,000,000円</td></tr>
+					</table>
+				</div>
+				
+				<div class="card">
+					<h3>矯正治療</h3>
+					<table class="table">
+						<tr><th>ワイヤー矯正（金属製）</th><td>480,000円</td></tr>
+						<tr><th>ワイヤー矯正（透明）</th><td>600,000円</td></tr>
+						<tr><th>マウスピース矯正</th><td>700,000円</td></tr>
+					</table>
+				</div>
+				
+				<div class="card">
+					<h3>審美治療</h3>
+					<table class="table">
+						<tr><th>ホワイトニング</th><td>40,000円</td></tr>
+						<tr><th>セラミック</th><td>90,000円</td></tr>
+						<tr><th>ジルコニア</th><td>120,000円</td></tr>
+					</table>
+				</div>
+			</div>
+			
+			<div class="card" style="margin-top:16px; background:var(--accent);">
+				<p style="margin:0;"><strong>※ 上記は標準料金です。精密検査により最終的な金額が決まります。</strong></p>
+				<p style="margin:8px 0 0;">詳しくはお電話またはご来院時にお問い合わせください。</p>
+			</div>
+		</div>
+	</section>
+
+	<section id="notice" class="section">
+		<div class="container">
+			<h2>施設基準等に関する院内掲示</h2>
+
+			<div class="card">
+				<h3>当医院の療養担当規則等に関する院内掲示について</h3>
+				<p><strong>当院の保険医療機関情報について</strong></p>
+				<ul class="list">
+					<li>(1) 管理者氏名：横山 幸夫</li>
+					<li>(2) 診療に従事する歯科医師の氏名：横山 幸夫、目黒 恵</li>
+					<li>(3) 診療日・診療時間：月火水木金土 9:00-13:00／14:30-18:00（<strong>土曜は17:30まで</strong>、<strong>水・木は隔週往診</strong>）</li>
+				</ul>
+			</div>
+
+			<div class="info" style="margin-top:16px;">
+				<div class="card">
+					<h3>当院の個人情報保護について</h3>
+					<p>当院は、個人情報保護に努め、問診票などの個人情報は治療目的以外には使用しません。</p>
+				</div>
+				<div class="card">
+					<h3>歯科疾患管理料（お口の病気の継続管理）</h3>
+					<p>当院は、患者様のお口の健康維持のため、歯科疾患管理料を算定しております。定期的な検査や予防処置、継続的な管理を通じて、むし歯や歯周病の重症化を防ぎ、生涯にわたる健康な口腔環境をサポートいたします。</p>
+				</div>
+			</div>
+
+			<div class="info" style="margin-top:16px;">
+				<div class="card">
+					<h3>入れ歯（義歯）の再作製について</h3>
+					<p>入れ歯を新しく作った後は、<strong>6か月</strong>は新たに作り直すことはできません。他院で作った入れ歯についても同様になりますので紛失等にご注意ください。</p>
+				</div>
+				<div class="card">
+					<h3>保険外併用療養費について</h3>
+					<p>金属床による総義歯の提供、う蝕に罹患している患者の指導管理について、材料・費用・継続管理の概要を院内掲示にて掲示しております。</p>
+				</div>
+			</div>
+
+			<div class="card" style="margin-top:16px;">
+				<h3>訪問診療について</h3>
+				<p>当院は、単独での通院困難な患者様に訪問診療を実施しています。対象にならない場合もございますので、ご希望の方はまずは歯科医師までご相談ください。</p>
+			</div>
+
+			<div class="card" style="margin-top:16px;">
+				<h3>当院の施設基準の院内掲示について（2025年5月現在）</h3>
+				<p>施設基準とは、保険診療において医療機関の機能や診療体制、設備、安全面、サービスなどを評価するためのものです。当院は、以下の施設基準に適合している旨、厚生労働省に届出を行っています。</p>
+				<ul class="list">
+					<li><strong>歯科点数表の初診料の注1に係る基準</strong><br>院内感染防止のため、歯科医療機器の患者ごとの交換・洗浄・滅菌を徹底し、従業員への研修を実施しています。</li>
+					<li><strong>医療情報取得加算</strong><br>患者様の同意に基づき、受診歴、薬剤情報、特定健診情報などの診療情報を取得・活用し、より安全で質の高い医療の提供に努めています。</li>
+					<li><strong>医療DX推進体制整備加算</strong><br>オンライン資格確認などの導入を通じて医療DXを推進し、質の高い医療提供のための十分な情報を取得する体制を整えています。</li>
+					<li><strong>歯科外来・在宅ベースアップ評価料</strong><br>職員の賃金の改善を行い、働きやすい職場環境づくりに努めています。</li>
+					<li><strong>歯科外来診療医療安全対策加算</strong><br>AED等の医療安全対策に必要な装置を備え、緊急時には連携医療機関と協力して対応できる体制を整えています。</li>
+					<li><strong>歯科外来診療感染対策加算</strong><br>院内感染管理者を配置し、清潔で安全な診療環境を整備しています。</li>
+					<li><strong>小児口腔機能管理料の注3に規定する口腔管理体制強化加算</strong><br>地域と協力し、生涯にわたるお口の健康管理を支援。緊急時には連携医療機関と迅速に対応できる体制を整え、重症化予防のための継続的管理を行っています。</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<section id="first" class="section">
+		<div class="container">
+			<h2>初めての方へ</h2>
+			<div class="info">
+				<div class="card">
+					<h3>持ち物</h3>
+					<ul class="list">
+						<li>健康保険証</li>
+						<li>お薬手帳</li>
+						<li>紹介状（お持ちの方）</li>
+					</ul>
+				</div>
+				<div class="card">
+					<h3>当日の流れ</h3>
+					<ol class="list">
+						<li>受付・問診票のご記入</li>
+						<li>検査・診断</li>
+						<li>説明・治療計画のご提案</li>
+						<li>治療・予防メンテナンス</li>
+					</ol>
+					<p style="color:var(--muted); font-size:14px; margin-top:8px;">保険診療・自由診療の範囲は事前に明確にご説明します。</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="contact" class="section">
+		<div class="container">
+			<h2>お問い合わせ・ご予約</h2>
+			<div class="info">
+				<div class="card">
+					<h3>お電話</h3>
+					<p><a href="tel:0471350748" class="btn">TEL 04-7135-0748 に電話する</a></p>
+					<p style="color:var(--muted); font-size:14px; margin-top:8px;">急な痛みやお困りごとも、まずはお電話でご相談ください。</p>
+				</div>
+				<div class="card">
+					<h3>所在地</h3>
+					<p>〒277-0827 千葉県柏市松葉町1-16-6</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+</main>
+
+<footer class="footer">
+	<div class="container">
+		<div class="info">
+			<div>
+				<h3 style="margin:0 0 8px;">ライフタウン歯科クリニック</h3>
+				<p style="margin:0;">〒277-0827 千葉県柏市松葉町1-16-6<br>
+					TEL <a href="tel:0471350748">04-7135-0748</a></p>
+			</div>
+			<div>
+				<p style="margin:0; color:#a8c2bf;">© 2026 Lifetown Dental Clinic. All rights reserved.</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+</body>
+</html>`;
+  };
+
+  const handleDownload = () => {
+    const html = generateHTML();
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'lifetown-dental-clinic.html';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            ライフタウン歯科クリニック HTMLエディター（修正版）
+          </h1>
+          <p className="text-gray-600 mb-6">
+            画像を選択してプレビュー確認後、HTMLファイルとして保存できます
+          </p>
+
+          {!showPreview ? (
+            <>
+              <div className="space-y-6 mb-8">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">📷 画像を選択（合計10枚）</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.keys(imageLabels).map(key => (
+                    <div key={key} className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {imageLabels[key]}
+                      </label>
+                      <div className="flex items-center gap-3 mb-3">
+                        <label className="flex-1 cursor-pointer">
+                          <div className="flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg transition text-sm">
+                            <Upload size={16} />
+                            <span>ファイルを選択</span>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleImageUpload(key, e.target.files[0])}
+                          />
+                        </label>
+                        {images[key] && (
+                          <div className="flex items-center gap-1 text-green-600 text-sm">
+                            <Image size={16} />
+                            <span>✓</span>
+                          </div>
+                        )}
+                      </div>
+                      {images[key] && (
+                        <div className="mt-2">
+                          <img 
+                            src={images[key]} 
+                            alt="プレビュー" 
+                            className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">🗺️ Googleマップ埋め込みコード</h2>
+                <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Googleマップのiframeコードをペースト
+                  </label>
+                  <textarea
+                    className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent font-mono text-sm"
+                    placeholder='例: <iframe src="https://www.google.com/maps/embed?pb=..." width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>'
+                    value={googleMapIframe}
+                    onChange={(e) => setGoogleMapIframe(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 Googleマップで「共有」→「地図を埋め込む」からiframeコードをコピーしてください
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => setShowPreview(true)}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow-md"
+                >
+                  <Eye size={20} />
+                  プレビュー表示
+                </button>
+                <button
+                  onClick={handleDownload}
+                  className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow-md"
+                >
+                  <Download size={20} />
+                  HTMLファイルをダウンロード
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-6 flex gap-4">
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold transition"
+                >
+                  ← 編集に戻る
+                </button>
+                <button
+                  onClick={handleDownload}
+                  className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-semibold transition"
+                >
+                  <Download size={18} />
+                  ダウンロード
+                </button>
+              </div>
+              <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                  srcDoc={generateHTML()}
+                  className="w-full"
+                  style={{ height: '80vh' }}
+                  title="プレビュー"
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
